@@ -1,0 +1,18 @@
+tunnel: aa6a7b0e-c401-42b6-9189-94e6fd7ff7b0
+credentials-file: C:\Users\Ortlumon\.cloudflared\aa6a7b0e-c401-42b6-9189-94e6fd7ff7b0.json
+
+ingress:
+  # Backend API & Swagger Docs
+  - hostname: ensiladosapi.cherry.lat
+    service: http://localhost:8001
+
+  # Frontend Web (React / Vite)
+  - hostname: ensilados.cherry.lat
+    service: http://localhost:5173
+
+  # Jerusalen SRL - Marmoles y Stock Brasil (Puerto 3030)
+  - hostname: jerusalen.cherry.lat
+    service: http://localhost:3030
+
+  # Regla final de captura
+  - service: http_status:404

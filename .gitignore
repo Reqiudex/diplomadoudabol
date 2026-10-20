@@ -1,0 +1,47 @@
+# Archivos de entorno y secretos (NUNCA subir a git)
+.env
+.env.local
+.env.*.local
+backend/.env
+
+# Python & Entornos Virtuales
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+*.sqlite3
+*.db
+
+# Node & Frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Cloudflare credentials (seguridad - no subir claves privadas)
+*.pem
+
+# IDEs & Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Archivos de ejemplo incluidos intencionalmente (NO excluir)
+# .env.example  → OK subirlo
+# backend/.env.example → OK subirlo

@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Integración Empresarial</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 30px 16px;
+            background: #f2f5f9;
+            color: #263238;
+        }
+
+        main {
+            max-width: 850px;
+            margin: auto;
+        }
+
+        h1 {
+            color: #123b65;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px #00000010;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 5px;
+            font-size: 15px;
+        }
+
+        input {
+            border: 1px solid #ccd4df;
+        }
+
+        button {
+            background: #1266b1;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0b4c87;
+        }
+
+        .secondary {
+            background: #52616b;
+        }
+
+        .message {
+            overflow-wrap: anywhere;
+            font-size: 14px;
+        }
+
+        .product {
+            background: white;
+            padding: 14px;
+            margin: 10px 0;
+            border-left: 4px solid #1266b1;
+            border-radius: 5px;
+            list-style: none;
+        }
+
+        .status {
+            color: #176b38;
+        }
+
+        .error {
+            color: #b42318;
+        }
+    </style>
+</head>
+
+<body>
+<main>
+    <h1>Gestión de Catálogo e Inventario</h1>
+    <p>Frontend web integrado con una API REST protegida mediante JWT.</p>
+
+    <section class="card">
+        <h2>1. Iniciar sesión</h2>
+
+        <label for="user">Usuario</label>
+        <input id="user" type="text" value="admin" autocomplete="username">
+
+        <label for="pass">Contraseña</label>
+        <input id="pass" type="password" value="123456"
+               autocomplete="current-password">
+
+        <button id="loginBtn" type="button">Iniciar sesión</button>
+        <p id="msg-login" class="message" role="status"></p>
+        <button id="logoutBtn" class="secondary" type="button">
+            Cerrar sesión
+        </button>
+    </section>
+
+    <section class="card">
+        <h2>2. Registrar producto</h2>
+
+        <form id="productForm">
+            <label for="prod-nombre">Nombre del producto</label>
+            <input id="prod-nombre" type="text"
+                   placeholder="Ej. Router Industrial 5G"
+                   maxlength="150" required>
+
+            <label for="prod-precio">Precio</label>
+            <input id="prod-precio" type="number"
+                   placeholder="450.00" min="0" step="0.01" required>
+
+            <label for="prod-stock">Stock disponible</label>
+            <input id="prod-stock" type="number"
+                   placeholder="12" min="0" step="1" required>
+
+            <button type="submit">Enviar a la API</button>
+        </form>
+
+        <p id="msg-producto" class="message" role="status"></p>
+    </section>
+
+    <section class="card">
+        <h2>3. Existencias en inventario</h2>
+        <button id="refreshBtn" class="secondary" type="button">
+            Actualizar lista
+        </button>
+        <ul id="lista-productos"></ul>
+    </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
