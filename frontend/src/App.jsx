@@ -4,6 +4,7 @@ import {
   Users, LogIn, LogOut, Plus, Trash2, RefreshCw, CheckCircle, AlertTriangle, FileText, Activity, Box 
 } from 'lucide-react';
 import { Product3DViewer } from './Product3DViewer';
+import { formatCurrency, formatNumber, toNumber } from './utils/formatters';
 
 // Resolución de la URL de la API según el entorno:
 // 1. Si está configurada la variable VITE_API_URL (ej. en Coolify: https://api.diplomado.cerice360.com o similar)
@@ -264,7 +265,7 @@ export default function App() {
     }
   };
 
-  const cartTotal = cart.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0);
+  const cartTotal = cart.reduce((sum, item) => sum + (toNumber(item.unit_price) * item.quantity), 0);
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -543,8 +544,8 @@ export default function App() {
                             <td>#{p.id}</td>
                             <td><code>{p.sku}</code></td>
                             <td><strong>{p.name}</strong></td>
-                            <td>${p.cost_price.toFixed(2)}</td>
-                            <td><strong>${p.price.toFixed(2)}</strong></td>
+                            <td>${formatNumber(p.cost_price)}</td>
+                            <td><strong>${formatNumber(p.price)}</strong></td>
                             <td>
                               <span style={{ fontSize: '15px', fontWeight: 'bold' }}>{p.stock}</span>
                             </td>
@@ -694,7 +695,7 @@ export default function App() {
                     <option value="">-- Seleccionar Silo o Forraje --</option>
                     {products.map(p => (
                       <option key={p.id} value={p.id} disabled={p.stock <= 0}>
-                        {p.name} (Stock: {p.stock} | Precio: ${p.price.toFixed(2)})
+                        {p.name} (Stock: {p.stock} | Precio: ${formatNumber(p.price)})
                       </option>
                     ))}
                   </select>
@@ -738,7 +739,7 @@ export default function App() {
                         <tr key={s.id}>
                           <td><strong>#{s.id}</strong></td>
                           <td>{new Date(s.created_at).toLocaleString()}</td>
-                          <td><strong style={{ color: '#15803d' }}>${s.total_amount.toFixed(2)}</strong></td>
+                          <td><strong style={{ color: '#15803d' }}>${formatNumber(s.total_amount)}</strong></td>
                         </tr>
                       ))
                     )}
@@ -763,11 +764,11 @@ export default function App() {
                       <div>
                         <div style={{ fontWeight: 600, fontSize: '14px' }}>{item.name}</div>
                         <div style={{ fontSize: '12px', color: '#64748b' }}>
-                          {item.quantity} x ${item.unit_price.toFixed(2)}
+                          {item.quantity} x ${formatNumber(item.unit_price)}
                         </div>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span style={{ fontWeight: 'bold' }}>${(item.unit_price * item.quantity).toFixed(2)}</span>
+                        <span style={{ fontWeight: 'bold' }}>${formatNumber(toNumber(item.unit_price) * item.quantity)}</span>
                         <button
                           onClick={() => removeFromCart(idx)}
                           style={{ background: '#fee2e2', color: '#dc2626', border: 'none', padding: '2px 6px', borderRadius: '4px' }}
@@ -779,7 +780,7 @@ export default function App() {
                   ))}
                   <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: '2px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', fontSize: '18px', fontWeight: 'bold' }}>
                     <span>Total a Cobrar:</span>
-                    <span style={{ color: '#15803d' }}>${cartTotal.toFixed(2)}</span>
+                    <span style={{ color: '#15803d' }}>${formatNumber(cartTotal)}</span>
                   </div>
                   <button
                     onClick={checkoutSale}
@@ -834,7 +835,7 @@ export default function App() {
                             <td><strong>#{p.id}</strong></td>
                             <td>{new Date(p.created_at).toLocaleString()}</td>
                             <td>{supp ? supp.nombre_razon_social : 'Sin proveedor'}</td>
-                            <td><strong>${p.total_amount.toFixed(2)}</strong></td>
+                            <td><strong>${formatNumber(p.total_amount)}</strong></td>
                           </tr>
                         );
                       })
