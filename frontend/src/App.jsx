@@ -558,7 +558,29 @@ export default function App() {
                                 <span className="badge badge-success">Disponible</span>
                               )}
                             </td>
-                            <td>
+                            <td style={{ display: 'flex', gap: '6px' }}>
+                              <button
+                                onClick={() => {
+                                  setSelectedProduct3D(p);
+                                  setTab('3dview');
+                                }}
+                                title="Ver modelo 3D interactivo"
+                                style={{
+                                  background: '#e0f2fe',
+                                  color: '#0284c7',
+                                  border: 'none',
+                                  padding: '4px 8px',
+                                  borderRadius: '4px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '4px',
+                                  fontSize: '12px',
+                                  fontWeight: 600,
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                <Box size={14} /> 3D
+                              </button>
                               <button
                                 onClick={() => handleDeleteProduct(p.id, p.name)}
                                 style={{
@@ -566,7 +588,8 @@ export default function App() {
                                   color: '#dc2626',
                                   border: 'none',
                                   padding: '4px 8px',
-                                  borderRadius: '4px'
+                                  borderRadius: '4px',
+                                  cursor: 'pointer'
                                 }}
                               >
                                 <Trash2 size={14} />
