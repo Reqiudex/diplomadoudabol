@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 import models
 import schemas
 from database import engine, get_db
+from slack_notifier import send_slack_notification
 
 load_dotenv()
 
@@ -200,6 +201,20 @@ def create_product(product: schemas.ProductCreate, db: Session = Depends(get_db)
         )
         db.add(kardex)
         db.commit()
+
+    # Notificación opcional a Slack (no bloqueante)
+    try:
+        send_slack_notification(
+            f"🆕 *Nuevo Producto Registrado:* {new_product.name}",
+            {
+                "SKU": new_product.sku,
+                "Categoría": new_product.categoria,
+                "Stock": str(new_product.stock),
+                "Precio Venta": f"${new_product.price}"
+            }
+        )
+    except Exception:
+        pass
 
     return new_product
 

@@ -16,6 +16,7 @@ services:
       - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES:-120}
       - PORT=8000
       - CORS_ORIGINS=${CORS_ORIGINS:-https://diplomado.cerice360.com,http://diplomado.cerice360.com}
+      - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL:-}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s

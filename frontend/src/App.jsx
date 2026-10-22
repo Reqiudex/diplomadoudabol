@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Package, ShoppingCart, ArrowDownCircle, ArrowUpCircle, 
-  Users, LogIn, LogOut, Plus, Trash2, RefreshCw, CheckCircle, AlertTriangle, FileText, Activity 
+  Users, LogIn, LogOut, Plus, Trash2, RefreshCw, CheckCircle, AlertTriangle, FileText, Activity, Box 
 } from 'lucide-react';
+import { Product3DViewer } from './Product3DViewer';
 
 // Resolución de la URL de la API según el entorno:
 // 1. Si está configurada la variable VITE_API_URL (ej. en Coolify: https://api.diplomado.cerice360.com o similar)
@@ -23,7 +24,8 @@ const API_BASE = import.meta.env.VITE_API_URL
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('token') || '');
   const [user, setUser] = useState(localStorage.getItem('username') || '');
-  const [tab, setTab] = useState('inventory'); // inventory, pos, purchases, kardex, suppliers, auth
+  const [tab, setTab] = useState('inventory'); // inventory, 3dview, pos, purchases, kardex, suppliers, auth
+  const [selectedProduct3D, setSelectedProduct3D] = useState(null);
 
   // Data states
   const [products, setProducts] = useState([]);
@@ -348,6 +350,22 @@ export default function App() {
             <Package size={16} /> 1. Silos & Existencias ({products.length})
           </button>
           <button
+            onClick={() => setTab('3dview')}
+            style={{
+              padding: '10px 18px',
+              border: 'none',
+              background: tab === '3dview' ? '#15803d' : '#e2e8f0',
+              color: tab === '3dview' ? '#fff' : '#334155',
+              borderRadius: '6px 6px 0 0',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontWeight: 600
+            }}
+          >
+            <Box size={16} /> Visor 3D Interactivo
+          </button>
+          <button
             onClick={() => setTab('pos')}
             style={{
               padding: '10px 18px',
@@ -429,6 +447,49 @@ export default function App() {
             <LogIn size={16} /> Login JWT
           </button>
         </div>
+
+        {/* TAB VISOR 3D */}
+        {tab === '3dview' && (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '24px' }}>
+            <div>
+              <Product3DViewer
+                productName={selectedProduct3D?.name || (products.length > 0 ? products[0].name : "Silo de Grano / Maíz")}
+                category={selectedProduct3D?.categoria || "Almacenamiento Agrícola"}
+                sku={selectedProduct3D?.sku || (products.length > 0 ? products[0].sku : "SILO-01")}
+                stock={selectedProduct3D?.stock ?? (products.length > 0 ? products[0].stock : 10)}
+              />
+            </div>
+            <div style={{ background: '#fff', padding: '20px', borderRadius: '8px', border: '1px solid #e2e8f0', height: 'fit-content' }}>
+              <h3 style={{ fontSize: '15px', fontWeight: 'bold', marginBottom: '12px' }}>
+                Seleccionar Producto para Visualizar en 3D
+              </h3>
+              <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '14px' }}>
+                Explora la estructura 3D interactiva, rota con el ratón o el dedo y ajusta el zoom.
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {products.map(p => (
+                  <button
+                    key={p.id}
+                    onClick={() => setSelectedProduct3D(p)}
+                    style={{
+                      textAlign: 'left',
+                      padding: '10px 12px',
+                      borderRadius: '6px',
+                      border: selectedProduct3D?.id === p.id ? '2px solid #16a34a' : '1px solid #e2e8f0',
+                      background: selectedProduct3D?.id === p.id ? '#f0fdf4' : '#fff',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <div style={{ fontWeight: 600, fontSize: '13px', color: '#1e293b' }}>{p.name}</div>
+                    <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>
+                      SKU: <code>{p.sku}</code> | Stock: <strong>{p.stock}</strong>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* TAB 1: INVENTARIO */}
         {tab === 'inventory' && (
