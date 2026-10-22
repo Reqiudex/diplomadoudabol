@@ -6,21 +6,34 @@ import {
 import { Product3DViewer } from './Product3DViewer';
 import { formatCurrency, formatNumber, toNumber } from './utils/formatters';
 
-// Resolución de la URL de la API según el entorno:
-// 1. Si está configurada la variable VITE_API_URL (ej. en Coolify: https://api.diplomado.cerice360.com o similar)
-// 2. Si estamos en diplomado.cerice360.com y Coolify sirve en el mismo host o subdominio api
-// 3. Si estamos en cherry.lat
-// 4. Si estamos en Docker local puerto 3000 -> puerto 8000
-// 5. Desarrollo local por defecto -> puerto 8000 o 8001
-const API_BASE = import.meta.env.VITE_API_URL
-  ? import.meta.env.VITE_API_URL
-  : (window.location.hostname.includes("diplomado.cerice360.com")
-      ? `${window.location.protocol}//api.${window.location.hostname}/api/v1`
-      : (window.location.hostname.includes("cherry.lat")
-          ? "https://ensiladosapi.cherry.lat/api/v1"
-          : (window.location.port === "8000" || window.location.port === "3000"
-              ? `${window.location.protocol}//${window.location.hostname}:8000/api/v1`
-              : "http://127.0.0.1:8000/api/v1")));
+// Resolución inteligente de la URL de la API:
+// 1. Si se define VITE_API_URL explícitamente, usarla
+// 2. Si se navega en el dominio diplomado.cerice360.com, usar ruta relativa /api/v1 (atendida por el proxy interno Nginx con cero problemas de CORS o subdominios)
+// 3. Si se navega en cherry.lat
+// 4. Si se corre localmente en puertos 8088, 3000 o 8000
+const getApiBase = () => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  if (typeof window !== "undefined") {
+    const host = window.location.hostname;
+    if (host.includes("diplomado.cerice360.com")) {
+      return "/api/v1";
+    }
+    if (host.includes("cherry.lat")) {
+      return "https://ensiladosapi.cherry.lat/api/v1";
+    }
+    if (window.location.port === "8088" || window.location.port === "80") {
+      return "/api/v1";
+    }
+    if (window.location.port === "8089") {
+      return "http://127.0.0.1:8089/api/v1";
+    }
+  }
+  return "http://127.0.0.1:8089/api/v1";
+};
+
+const API_BASE = getApiBase();
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('token') || '');
