@@ -107,6 +107,20 @@ El sistema cuenta con un conector nativo en [`backend/slack_notifier.py`](backen
 
 ---
 
+## 🎨 Visualizador 3D Interactivo de Productos (Three.js)
+
+Se implementó un motor de renderizado 3D en [`frontend/src/Product3DViewer.tsx`](frontend/src/Product3DViewer.tsx) con modelos especializados e interactivos para cada producto:
+- **Martillo de Uña 16oz:** Cabeza de acero forjado cromado, uña sacaclavos y mango ergonómico con grip negro.
+- **Taladro Percutor Bosch 750W:** Carcasa azul industrial, mandril dentado, broca plateada y selector de percusión.
+- **Amoladora DeWalt 4-1/2":** Chasis amarillo DeWalt, disco abrasivo, guarda protectora y manija lateral.
+- **Bolsa Ensilado SiloPack 50kg:** Bolsa orgánica en polietileno tricapa blanco UV con franja verde y precinto.
+- **Inoculante Bacteriano 100g:** Frasco de agroquímicos con precinto inviolable y medidor de graduación.
+- **Juego de Llaves Stanley:** Estuche organizador rígido y set de 5 llaves métricas cromadas (boca fija y estriada).
+- **Silo Agrícola Industrial:** Silo cilíndrico de chapa galvanizada con techo cónico y patas soporte.
+- **Características:** Detección automática al seleccionar productos, iluminación multicapa (Key/Rim/Fill), rotación 360° táctil/ratón, zoom interactivo y botón de acceso rápido `[ 3D ]` directo en cada fila de inventario.
+
+---
+
 ## 🧪 Pruebas Automatizadas del Backend
 
 Se dispone de una suite completa de pruebas unitarias y de integración con **pytest**:
