@@ -1,0 +1,30 @@
+services:
+  # ─── pgAdmin: Interfaz web de administración de PostgreSQL ───────────────
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: diplomado_pgadmin
+    restart: unless-stopped
+    ports:
+      - "8090:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
+      - PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION=True
+      - PGADMIN_CONFIG_LOGIN_BANNER="Acceso Restringido - Sistema Diplomado UDABOL"
+      - PGADMIN_CONFIG_CONSOLE_LOG_LEVEL=10
+    volumes:
+      - diplomado_pgadmin_data:/var/lib/pgadmin
+    networks:
+      - diplomado_pgadmin_net
+      - coolify
+
+networks:
+  diplomado_pgadmin_net:
+    name: diplomado_pgadmin_net
+    driver: bridge
+  coolify:
+    external: true
+
+volumes:
+  diplomado_pgadmin_data:
+    name: diplomado_pgadmin_data

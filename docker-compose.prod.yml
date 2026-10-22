@@ -1,0 +1,52 @@
+services:
+  # ─── Backend: FastAPI + PostgreSQL (Supabase local) ──────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: diplomado_backend
+    restart: unless-stopped
+    ports:
+      - "8089:8000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SECRET_KEY=${SECRET_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - ALGORITHM=${ALGORITHM:-HS256}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES:-120}
+      - PORT=8000
+      - CORS_ORIGINS=${CORS_ORIGINS:-https://diplomado.cerice360.com,https://api.diplomado.cerice360.com}
+      - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL:-}
+    networks:
+      - diplomado_net
+      - coolify
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # ─── Frontend: React + Nginx SPA ─────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=${VITE_API_URL:-https://api.diplomado.cerice360.com/api/v1}
+    container_name: diplomado_frontend
+    restart: unless-stopped
+    ports:
+      - "8088:80"
+    networks:
+      - diplomado_net
+    depends_on:
+      backend:
+        condition: service_healthy
+
+networks:
+  diplomado_net:
+    name: diplomado_net
+    driver: bridge
+  coolify:
+    external: true

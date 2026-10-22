@@ -1,129 +1,118 @@
-# 🚀 Guía Definitiva de Despliegue en Coolify
+# 🚀 Guía Definitiva de Despliegue en Servidor y Coolify
 
 > **Proyecto:** Sistema de Compra-Venta, Inventario Estricto y Kardex de Auditoría  
-> **Dominio de Producción Web:** `https://diplomado.cerice360.com`  
-> **Dominio de Producción API:** `https://api.diplomado.cerice360.com`  
-> **Base de Datos:** PostgreSQL gestionado en Supabase  
-> **Servidor:** Ubuntu Server con Coolify instalado
+> **Dominio Público Web:** `https://diplomado.cerice360.com`  
+> **Dominio Público API:** `https://apidiplomado.cerice360.com`  
+> **Dominio Administrador de BD (pgAdmin 4):** `https://diplomadodb.cerice360.com`  
+> **Base de Datos:** PostgreSQL en Supabase (`diplomado_udabol`)  
+> **Servidor:** Ubuntu Server + Docker + Cloudflare Zero Trust Tunnel
 
 ---
 
-## 📋 Resumen de Despliegue
+## 📋 Arquitectura de Puertos y Servicios en Servidor
 
-Coolify puede desplegar este proyecto de **dos formas sencillas**. La opción recomendada para mayor independencia y control de dominios es **Servicios Separados (Backend + Frontend)** o mediante **Docker Compose**.
+En el servidor de producción actual, los servicios corren bajo los siguientes puertos y hostnames:
 
----
-
-## 🛠️ Opción 1: Despliegue como Servicios Separados (Recomendado)
-
-### 1. Desplegar el Backend (FastAPI)
-
-1. En el panel de **Coolify**, ve a tu Proyecto y haz clic en **+ New Resource** → **Public Repository** o **Private Repository (GitHub)**.
-2. Selecciona o ingresa la URL: `https://github.com/Reqiudex/diplomadoudabol`
-3. Rama: `main`
-4. **Configuración de Construcción:**
-   - **Build Pack:** `Dockerfile`
-   - **Base Directory:** `/backend`
-   - **Dockerfile Location:** `/Dockerfile`
-   - **Exposed Port:** `8000`
-5. **Dominio Público:** Configura `https://api.diplomado.cerice360.com`
-6. **Variables de Entorno (Environment Variables):**
-   Agrega las siguientes variables en la pestaña de variables:
-
-   | Variable | Valor | Nota |
-   |---|---|---|
-   | `DATABASE_URL` | `postgresql://postgres.xxx:tu_password@aws-0-us-east-1.pooler.supabase.com:5432/postgres` | Cadena IPv4 Pooler de Supabase |
-   | `JWT_SECRET_KEY` | *(Cadena aleatoria de 64 caracteres)* | Clave para firmar tokens |
-   | `SECRET_KEY` | *(Mismo valor que JWT_SECRET_KEY)* | Compatibilidad |
-   | `PORT` | `8000` | Puerto interno |
-   | `CORS_ORIGINS` | `https://diplomado.cerice360.com,http://diplomado.cerice360.com` | Origen del frontend |
-
-7. **Healthcheck:**
-   - Path: `/health`
-   - Port: `8000`
-8. Haz clic en **Deploy**.
+| Servicio | Contenedor | Puerto Local | Dominio Cloudflare / Ingress |
+|---|---|---|---|
+| **Frontend Web** | `diplomado_frontend` | `8088` (Nginx) | `https://diplomado.cerice360.com` |
+| **Backend REST API** | `diplomado_backend` | `8089` (Uvicorn) | `https://apidiplomado.cerice360.com` *(y `api.diplomado.cerice360.com`)* |
+| **pgAdmin 4** | `diplomado_pgadmin` | `8090` (Web) | `https://diplomadodb.cerice360.com` |
+| **PostgreSQL** | `supabase-db-bx4ixq11kl7vwnrall5bdty0` | `5432` | Red interna de Docker `coolify` |
 
 ---
 
-### 2. Desplegar el Frontend (React + Vite + Nginx)
+## 🛠️ Despliegue en Producción (Docker Compose)
 
-1. En Coolify, dentro del mismo proyecto, haz clic en **+ New Resource** → Repositorio `https://github.com/Reqiudex/diplomadoudabol`.
-2. Rama: `main`
-3. **Configuración de Construcción:**
-   - **Build Pack:** `Dockerfile`
-   - **Base Directory:** `/frontend`
-   - **Dockerfile Location:** `/Dockerfile`
-   - **Exposed Port:** `80`
-4. **Dominio Público:** Configura `https://diplomado.cerice360.com`
-5. **Variables de Entorno de Construcción (Build Environment Variables):**
-   Agrega:
+El proyecto cuenta con un archivo optimizado para producción: `docker-compose.prod.yml`.
 
-   | Variable | Valor |
-   |---|---|
-   | `VITE_API_URL` | `https://api.diplomado.cerice360.com/api/v1` |
+### 1. Variables de Entorno (`.env.prod`)
 
-6. Haz clic en **Deploy**.
+Configura el archivo `.env.prod` en la raíz del proyecto:
 
----
+```env
+# Conexión a PostgreSQL (Supabase en red coolify)
+DATABASE_URL=postgresql://diplomado_user:MwUe1yEKY1OVdoN0JHbaJpD2@supabase-db-bx4ixq11kl7vwnrall5bdty0:5432/diplomado_udabol
 
-## 🐳 Opción 2: Despliegue con Docker Compose (Todo en Uno)
+# Seguridad JWT
+SECRET_KEY=tu_clave_secreta_jwt_de_produccion_2026
+JWT_SECRET_KEY=tu_clave_secreta_jwt_de_produccion_2026
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=120
 
-1. En **Coolify**, haz clic en **+ New Resource** → **Docker Compose**.
-2. Selecciona el repositorio `https://github.com/Reqiudex/diplomadoudabol`, rama `main`.
-3. Coolify detectará automáticamente `docker-compose.yml`.
-4. En la sección de **Environment Variables**, configura:
-   ```env
-   DATABASE_URL=postgresql://postgres.xxx:tu_password@aws-0-us-east-1.pooler.supabase.com:5432/postgres
-   JWT_SECRET_KEY=clave_secreta_super_segura_de_produccion_2026
-   SECRET_KEY=clave_secreta_super_segura_de_produccion_2026
-   CORS_ORIGINS=https://diplomado.cerice360.com,http://diplomado.cerice360.com
-   VITE_API_URL=https://api.diplomado.cerice360.com/api/v1
-   ```
-5. En la configuración de dominios de los servicios dentro de Coolify:
-   - Asigna al servicio `frontend`: `https://diplomado.cerice360.com`
-   - Asigna al servicio `backend`: `https://api.diplomado.cerice360.com`
-6. Haz clic en **Deploy**.
+# CORS
+CORS_ORIGINS=https://diplomado.cerice360.com,http://diplomado.cerice360.com,https://apidiplomado.cerice360.com,http://apidiplomado.cerice360.com
 
----
+# Frontend
+VITE_API_URL=/api/v1
 
-## 🗄️ Procedimiento de Migraciones (Supabase PostgreSQL)
+# Integración con Slack (Webhook)
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/TU_TEAM_ID/TU_BOT_ID/TU_SECRET_TOKEN
+```
 
-Las tablas y columnas requeridas (`users`, `products`, `suppliers`, `customers`, `purchases`, `purchase_items`, `sales`, `sale_items`, `kardex_movements`) **ya se encuentran aplicadas y sincronizadas** en la base de datos de Supabase.
+### 2. Construcción y Lanzamiento
 
-Si en el futuro deseas aplicar nuevas revisiones de Alembic desde la terminal del contenedor o localmente:
 ```bash
-# Dentro del contenedor backend:
-alembic upgrade head
+# Compilar e iniciar los servicios de producción
+docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
 ```
 
 ---
 
-## 👤 Creación del Primer Usuario Administrador
+## 🌐 Configuración del Túnel Cloudflare (`/etc/cloudflared/config.yml`)
 
-Para acceder inicialmente al sistema, cuentas con credenciales preconfiguradas:
+Las rutas públicas hacia los contenedores locales están configuradas de la siguiente manera:
+
+```yaml
+ingress:
+  # Frontend Diplomado UDABOL
+  - hostname: diplomado.cerice360.com
+    service: http://localhost:8088
+
+  # Backend Diplomado API (Swagger, Redoc, Endpoints)
+  - hostname: apidiplomado.cerice360.com
+    service: http://localhost:8089
+  - hostname: api.diplomado.cerice360.com
+    service: http://localhost:8089
+
+  # Administración de Base de Datos pgAdmin
+  - hostname: diplomadodb.cerice360.com
+    service: http://localhost:8090
+
+  - service: http_status:404
+```
+
+---
+
+## 🗄️ Acceso a la Base de Datos con pgAdmin 4
+
+Para administrar las 9 tablas, realizar consultas SQL o auditar el Kardex:
+
+1. Ingresa a [https://diplomadodb.cerice360.com](https://diplomadodb.cerice360.com)
+2. Credenciales pgAdmin:
+   - **Email:** `admin@cerice360.com`
+   - **Password:** `tCRrf20gexaPSXocxZvI`
+3. En el árbol de servidores, conecta a:
+   - **Host:** `supabase-db-bx4ixq11kl7vwnrall5bdty0`
+   - **Puerto:** `5432`
+   - **Maintenance Database:** `diplomado_udabol`
+   - **Username:** `diplomado_user`
+   - **Password:** `MwUe1yEKY1OVdoN0JHbaJpD2`
+
+---
+
+## 👤 Credenciales Iniciales de la Aplicación
+
 - **Usuario:** `admin`
-- **Contraseña:** `123456`
-
-Para registrar un nuevo usuario formal con hash seguro `bcrypt` y rol `ADMIN`:
-Envía una petición POST autenticada o mediante Swagger UI (`/docs`):
-```bash
-curl -X POST "https://api.diplomado.cerice360.com/api/v1/users" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "nombre": "Administrador General",
-    "email": "admin@cerice360.com",
-    "password": "PasswordMuySeguro2026!",
-    "rol": "ADMIN"
-  }'
-```
+- **Contraseña:** `123456` *(o `123`)*
+- **Rol:** `ADMIN`
 
 ---
 
-## ✅ Lista de Verificación Posterior al Despliegue
+## ✅ Verificación Posterior al Despliegue
 
-- [ ] `https://api.diplomado.cerice360.com/health` responde `{"status": "healthy"}` con código HTTP 200.
-- [ ] `https://api.diplomado.cerice360.com/docs` carga la documentación interactiva Swagger.
-- [ ] `https://diplomado.cerice360.com` carga la interfaz React con estilos completos.
-- [ ] Iniciar sesión en la pestaña **Login JWT** con `admin` / `123456`.
-- [ ] Realizar una venta de prueba en **Ventas**: verificar descuento en **Inventario** y registro cronológico en **Kardex de Auditoría**.
-- [ ] Probar validación de stock: intentar vender una cantidad mayor a la existente y verificar que el sistema rechace con mensaje explicativo sin dejar cambios huérfanos.
+- [x] `https://apidiplomado.cerice360.com/health` responde `{"status": "healthy"}` con código HTTP 200.
+- [x] `https://apidiplomado.cerice360.com/docs` carga la documentación interactiva Swagger.
+- [x] `https://diplomado.cerice360.com` carga la interfaz React con visor 3D, catálogo e inventario.
+- [x] `https://diplomadodb.cerice360.com` permite iniciar sesión y explorar el esquema relacional.
+- [x] Notificaciones automáticas a Slack al registrar nuevos productos.
