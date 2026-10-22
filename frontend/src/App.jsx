@@ -4,17 +4,21 @@ import {
   Users, LogIn, LogOut, Plus, Trash2, RefreshCw, CheckCircle, AlertTriangle, FileText, Activity 
 } from 'lucide-react';
 
-// Resolución de la URL de la API según el entorno
-// - Cloudflare Production: usa el dominio ensiladosapi.cherry.lat
-// - Docker (mismo host):   usa /api (proxy nginx)
-// - Desarrollo local:      usa el backend en :8001
-const API_BASE = window.location.hostname.includes("cherry.lat")
-  ? "https://ensiladosapi.cherry.lat/api/v1"
-  : (import.meta.env.VITE_API_URL
-      ? import.meta.env.VITE_API_URL
-      : (window.location.port === "8000" || window.location.port === "3000"
-          ? `${window.location.protocol}//${window.location.hostname}:8000/api/v1`
-          : "http://127.0.0.1:8001/api/v1"));
+// Resolución de la URL de la API según el entorno:
+// 1. Si está configurada la variable VITE_API_URL (ej. en Coolify: https://api.diplomado.cerice360.com o similar)
+// 2. Si estamos en diplomado.cerice360.com y Coolify sirve en el mismo host o subdominio api
+// 3. Si estamos en cherry.lat
+// 4. Si estamos en Docker local puerto 3000 -> puerto 8000
+// 5. Desarrollo local por defecto -> puerto 8000 o 8001
+const API_BASE = import.meta.env.VITE_API_URL
+  ? import.meta.env.VITE_API_URL
+  : (window.location.hostname.includes("diplomado.cerice360.com")
+      ? `${window.location.protocol}//api.${window.location.hostname}/api/v1`
+      : (window.location.hostname.includes("cherry.lat")
+          ? "https://ensiladosapi.cherry.lat/api/v1"
+          : (window.location.port === "8000" || window.location.port === "3000"
+              ? `${window.location.protocol}//${window.location.hostname}:8000/api/v1`
+              : "http://127.0.0.1:8000/api/v1")));
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('token') || '');

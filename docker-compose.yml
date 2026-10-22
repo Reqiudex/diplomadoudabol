@@ -1,31 +1,36 @@
 services:
-  # ─── Backend FastAPI ────────────────────────────────────────────────────
+  # ─── Backend: FastAPI + Supabase PostgreSQL ─────────────────────────────
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: ensilados_backend
+    container_name: ferreteria_backend
     restart: unless-stopped
     ports:
       - "8000:8000"
     environment:
       - DATABASE_URL=${DATABASE_URL}
-      - SECRET_KEY=${SECRET_KEY:-clave_secreta_cambiar_en_produccion}
+      - SECRET_KEY=${SECRET_KEY:-${JWT_SECRET_KEY:-clave_secreta_demo_ferreteria_2026_udabol}}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-${SECRET_KEY:-clave_secreta_demo_ferreteria_2026_udabol}}
       - ALGORITHM=${ALGORITHM:-HS256}
       - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES:-120}
+      - PORT=8000
+      - CORS_ORIGINS=${CORS_ORIGINS:-https://diplomado.cerice360.com,http://diplomado.cerice360.com}
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 10s
 
-  # ─── Frontend React + Nginx ─────────────────────────────────────────────
+  # ─── Frontend: React + Nginx SPA ────────────────────────────────────────
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: ensilados_frontend
+      args:
+        - VITE_API_URL=${VITE_API_URL:-https://api.diplomado.cerice360.com/api/v1}
+    container_name: ferreteria_frontend
     restart: unless-stopped
     ports:
       - "3000:80"
@@ -35,4 +40,4 @@ services:
 
 networks:
   default:
-    name: ensilados_net
+    name: ferreteria_network
