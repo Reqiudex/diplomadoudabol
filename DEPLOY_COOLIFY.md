@@ -1,4 +1,4 @@
-# 🚀 Guía Definitiva de Despliegue en Servidor y Coolify
+# Guía Definitiva de Despliegue en Servidor y Coolify
 
 > **Proyecto:** Sistema de Compra-Venta, Inventario Estricto y Kardex de Auditoría  
 > **Dominio Público Web:** `https://diplomado.cerice360.com`  
@@ -9,7 +9,7 @@
 
 ---
 
-## 📋 Arquitectura de Puertos y Servicios en Servidor
+## Arquitectura de Puertos y Servicios en Servidor
 
 En el servidor de producción actual, los servicios corren bajo los siguientes puertos y hostnames:
 
@@ -22,7 +22,7 @@ En el servidor de producción actual, los servicios corren bajo los siguientes p
 
 ---
 
-## 🛠️ Despliegue en Producción (Docker Compose)
+## Despliegue en Producción (Docker Compose)
 
 El proyecto cuenta con un archivo optimizado para producción: `docker-compose.prod.yml`.
 
@@ -59,7 +59,7 @@ docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
 
 ---
 
-## 🌐 Configuración del Túnel Cloudflare (`/etc/cloudflared/config.yml`)
+## Configuración del Túnel Cloudflare (`/etc/cloudflared/config.yml`)
 
 Las rutas públicas hacia los contenedores locales están configuradas de la siguiente manera:
 
@@ -84,7 +84,7 @@ ingress:
 
 ---
 
-## 🗄️ Acceso a la Base de Datos con pgAdmin 4
+## Acceso a la Base de Datos con pgAdmin 4
 
 Para administrar las 9 tablas, realizar consultas SQL o auditar el Kardex:
 
@@ -101,7 +101,7 @@ Para administrar las 9 tablas, realizar consultas SQL o auditar el Kardex:
 
 ---
 
-## 👤 Credenciales Iniciales de la Aplicación
+## Credenciales Iniciales de la Aplicación
 
 - **Usuario:** `admin`
 - **Contraseña:** `123456` *(o `123`)*
@@ -109,7 +109,7 @@ Para administrar las 9 tablas, realizar consultas SQL o auditar el Kardex:
 
 ---
 
-## ✅ Verificación Posterior al Despliegue
+## Verificación Posterior al Despliegue
 
 - [x] `https://apidiplomado.cerice360.com/health` responde `{"status": "healthy"}` con código HTTP 200.
 - [x] `https://apidiplomado.cerice360.com/docs` carga la documentación interactiva Swagger.

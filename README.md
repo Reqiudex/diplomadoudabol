@@ -1,23 +1,23 @@
-# 📦 Sistema de Compra-Venta, Inventario Estricto y Kardex de Auditoría
+# Sistema de Compra-Venta, Inventario Estricto y Kardex de Auditoría
 
 > **Proyecto Académico — Diplomado UDABOL 2026**  
 > Desarrollado con **FastAPI**, **PostgreSQL (Supabase)**, **React 19 (Vite + Tailwind CSS)** y orquestado con **Docker / Coolify / Cloudflare Zero Trust**.
 
 ---
 
-## 🌐 Enlaces Públicos de Producción en Vivo (Revisión Docente)
+## Enlaces Públicos de Producción en Vivo (Revisión Docente)
 
 El sistema se encuentra 100% operativo y desplegado en servidores de producción con certificados SSL/TLS activos:
 
 | Componente | Enlace Público en Vivo | Descripción / Acceso |
 |---|---|---|
-| **🛒 Aplicación Web (Frontend)** | [https://diplomado.cerice360.com](https://diplomado.cerice360.com) | Interfaz React SPA, visor 3D interactivo, POS y gestión |
-| **⚡ Backend API (Swagger UI)** | [https://apidiplomado.cerice360.com/docs](https://apidiplomado.cerice360.com/docs) | Documentación interactiva OpenAPI / Swagger |
-| **📖 Backend API (Redoc)** | [https://apidiplomado.cerice360.com/redoc](https://apidiplomado.cerice360.com/redoc) | Especificación técnica OpenAPI en formato Redoc |
-| **🩺 Healthcheck API** | [https://apidiplomado.cerice360.com/health](https://apidiplomado.cerice360.com/health) | Estado del servicio y timestamp UTC en tiempo real |
-| **🗄️ Base de Datos Web (pgAdmin 4)** | [https://diplomadodb.cerice360.com](https://diplomadodb.cerice360.com) | Administrador visual de tablas, relaciones y Kardex |
+| **Aplicación Web (Frontend)** | [https://diplomado.cerice360.com](https://diplomado.cerice360.com) | Interfaz React SPA, visor 3D interactivo, POS y gestión |
+| **Backend API (Swagger UI)** | [https://apidiplomado.cerice360.com/docs](https://apidiplomado.cerice360.com/docs) | Documentación interactiva OpenAPI / Swagger |
+| **Backend API (Redoc)** | [https://apidiplomado.cerice360.com/redoc](https://apidiplomado.cerice360.com/redoc) | Especificación técnica OpenAPI en formato Redoc |
+| **Healthcheck API** | [https://apidiplomado.cerice360.com/health](https://apidiplomado.cerice360.com/health) | Estado del servicio y timestamp UTC en tiempo real |
+| **Base de Datos Web (pgAdmin 4)** | [https://diplomadodb.cerice360.com](https://diplomadodb.cerice360.com) | Administrador visual de tablas, relaciones y Kardex |
 
-### 🔑 Credenciales de Acceso para Evaluación
+### Credenciales de Acceso para Evaluación
 
 #### 1. Acceso a la Aplicación Web (Frontend)
 - **Usuario:** `admin`
@@ -37,7 +37,7 @@ El sistema se encuentra 100% operativo y desplegado en servidores de producción
 
 ---
 
-## 🏛️ Arquitectura del Sistema en Producción
+## Arquitectura del Sistema en Producción
 
 ```
                                   [ INTERNET / CLIENTES ]
@@ -71,7 +71,7 @@ El sistema se encuentra 100% operativo y desplegado en servidores de producción
 
 ---
 
-## 🛠️ Stack Tecnológico Implementado
+## Stack Tecnológico Implementado
 
 | Capa | Tecnología | Implementación en Producción |
 |---|---|---|
@@ -84,7 +84,7 @@ El sistema se encuentra 100% operativo y desplegado en servidores de producción
 
 ---
 
-## 🗄️ Modelo de Datos Relacional (9 Tablas)
+## Modelo de Datos Relacional (9 Tablas)
 
 1. **`users`**: Identificador, nombre, correo electrónico único, password_hash (`bcrypt`), rol (`ADMIN`, `SELLER`, `WAREHOUSE_MANAGER`), estado y marcas temporales.
 2. **`products`**: ID, SKU único, nombre, descripción, categoría, precio de costo (`Numeric(12,2)`), precio de venta (`Numeric(12,2)`), stock actual, stock mínimo y estado.
@@ -98,7 +98,7 @@ El sistema se encuentra 100% operativo y desplegado en servidores de producción
 
 ---
 
-## 🔔 Notificaciones en Tiempo Real (Slack)
+## Notificaciones en Tiempo Real (Slack)
 
 El sistema cuenta con un conector nativo en [`backend/slack_notifier.py`](backend/slack_notifier.py) que despacha bloques interactivos a Slack ante:
 - Creación de nuevos productos en el catálogo.
@@ -107,7 +107,7 @@ El sistema cuenta con un conector nativo en [`backend/slack_notifier.py`](backen
 
 ---
 
-## 🎨 Visualizador 3D Interactivo de Productos (Three.js)
+## Visualizador 3D Interactivo de Productos (Three.js)
 
 Se implementó un motor de renderizado 3D en [`frontend/src/Product3DViewer.tsx`](frontend/src/Product3DViewer.tsx) con modelos especializados e interactivos para cada producto:
 - **Martillo de Uña 16oz:** Cabeza de acero forjado cromado, uña sacaclavos y mango ergonómico con grip negro.
@@ -121,7 +121,7 @@ Se implementó un motor de renderizado 3D en [`frontend/src/Product3DViewer.tsx`
 
 ---
 
-## 🧪 Pruebas Automatizadas del Backend
+## Pruebas Automatizadas del Backend
 
 Se dispone de una suite completa de pruebas unitarias y de integración con **pytest**:
 
@@ -131,17 +131,17 @@ python -m pytest -v tests/test_api.py tests/test_slack.py
 ```
 
 ### Casos de prueba cubiertos:
-- ✅ **Healthcheck:** Verificación de endpoint `/health` (HTTP 200).
-- ✅ **Autenticación:** Emisión y validación de tokens Bearer JWT y rechazo de credenciales incorrectas.
-- ✅ **Catálogo & Normalización:** Creación de productos con SKU único y persistencia numérica.
-- ✅ **Validación Estricta de Stock:** Rechazo inmediato con HTTP 400 al intentar vender sin existencia disponible.
-- ✅ **Transacciones de Compra:** Incremento consistente de stock y registro en Kardex (`ENTRADA`).
-- ✅ **Transacciones de Venta:** Descuento atómico de stock y registro en Kardex (`SALIDA`).
-- ✅ **Notificador Slack:** Despacho con webhook y manejo silencioso de excepciones en caso de fallo de red.
+- **Healthcheck:** Verificación de endpoint `/health` (HTTP 200).
+- **Autenticación:** Emisión y validación de tokens Bearer JWT y rechazo de credenciales incorrectas.
+- **Catálogo & Normalización:** Creación de productos con SKU único y persistencia numérica.
+- **Validación Estricta de Stock:** Rechazo inmediato con HTTP 400 al intentar vender sin existencia disponible.
+- **Transacciones de Compra:** Incremento consistente de stock y registro en Kardex (`ENTRADA`).
+- **Transacciones de Venta:** Descuento atómico de stock y registro en Kardex (`SALIDA`).
+- **Notificador Slack:** Despacho con webhook y manejo silencioso de excepciones en caso de fallo de red.
 
 ---
 
-## 💻 Ejecución Local con Docker Compose
+## Ejecución Local con Docker Compose
 
 ```bash
 # 1. Clonar el repositorio
